@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: feature-management
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # app:
+  #   build: .
+  #   restart: always
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     DATABASE_URL: postgres://postgres:postgres@db:5432/mydb
+  #     NODE_ENV: production
+  #   ports:
+  #     - '3000:3000'
+  #   command: ["sh", "-c", "npm run db:migrate && npm run start:prod"]  # Run migrations on start
+
+volumes:
+  postgres-data:
