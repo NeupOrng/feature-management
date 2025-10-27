@@ -5,6 +5,9 @@ import { FeatureFlagService } from './services/feature-flag.service';
 import { FeatureFlagController } from './controllers/feature-flag.controller';
 import { ProjectService } from './services/ project.service';
 import { ProjectController } from './controllers/project.controller';
+import { ApplicationService } from './services/application.service';
+import { ApplicationRepository } from './repository/application.repository';
+import { ApplicationController } from './controllers/application.controller';
 
 @Module({
     imports: [
@@ -14,10 +17,14 @@ import { ProjectController } from './controllers/project.controller';
         ProjectRepository,
         ProjectService,
 
+        ApplicationRepository,
+        ApplicationService,
+
         FeatureFlagService,
     ],
     controllers: [
         ProjectController,
+        ApplicationController,
         FeatureFlagController,
     ]
 })

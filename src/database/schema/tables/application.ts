@@ -11,7 +11,7 @@ import { sql } from 'drizzle-orm';
 import { projects } from './project';
 import { status } from '../enums/status.enum';
 
-export const apps = pgTable('apps', {
+export const applications = pgTable('applications', {
   appId: uuid('app_id')
     .default(sql`gen_random_uuid()`)
     .primaryKey(),

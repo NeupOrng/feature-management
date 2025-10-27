@@ -9,7 +9,7 @@ import {
   numeric,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
-import { apps } from './app'
+import { applications } from './application'
 import { status } from '../enums/status.enum';
 
 export const featureFlags = pgTable('feature_flags', {
@@ -18,7 +18,7 @@ export const featureFlags = pgTable('feature_flags', {
     .primaryKey(),
   appId: uuid('app_id')
     .notNull()
-    .references(() => apps.appId, { onDelete: 'cascade' }),
+    .references(() => applications.appId, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   enabled: boolean('enabled').default(false).notNull(),

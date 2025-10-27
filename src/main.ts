@@ -11,7 +11,6 @@ async function bootstrap() {
       'API documentation for the Feature Management System using NestJS and Drizzle ORM',
     )
     .setVersion('1.0')
-    .addTag('Feature Flags', 'Operations related to Feature Flags')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

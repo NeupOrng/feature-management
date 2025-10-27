@@ -7,7 +7,7 @@ export const enablePgcrypto = sql`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`;
 // --------------------------
 
 export { projects } from './tables/project';
-export { apps } from './tables/app';
+export { applications } from './tables/application';
 export { featureFlags } from './tables/feature-flag'
 
 
@@ -23,7 +23,7 @@ export { status, Status, StatusType } from './enums/status.enum';
 
 export {
     projectsRelations,
-    appsRelations,
+    applicationsRelations,
     featureFlagsRelations,
 } from './relation'
 
@@ -35,8 +35,8 @@ export type {
     Project,
     NewProject,
     
-    App,
-    NewApp,
+    Application,
+    NewApplication,
 
     FeatureFlag,
     NewFeatureFlag,
