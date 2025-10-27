@@ -7,6 +7,7 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { status } from '../enums/status.enum';
 
 export const projects = pgTable(
   'projects',
@@ -16,6 +17,7 @@ export const projects = pgTable(
       .primaryKey(),
     name: varchar('name', { length: 255 }).notNull().unique(),
     description: text('description'),
+    status: status('status').notNull().default('active'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),

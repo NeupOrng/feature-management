@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { projects } from './project';
+import { status } from '../enums/status.enum';
 
 export const apps = pgTable('apps', {
   appId: uuid('app_id')
@@ -19,7 +20,7 @@ export const apps = pgTable('apps', {
     .references(() => projects.projectId, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
-  killSwitch: boolean('kill_switch').default(false).notNull(),
+  status: status('status').notNull().default('active'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),

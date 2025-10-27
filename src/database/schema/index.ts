@@ -10,6 +10,13 @@ export { projects } from './tables/project';
 export { apps } from './tables/app';
 export { featureFlags } from './tables/feature-flag'
 
+
+// --------------------------
+// Enums
+// --------------------------
+
+export { status, Status, StatusType } from './enums/status.enum';
+
 // --------------------------
 // Relations
 // --------------------------

@@ -10,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { apps } from './app'
+import { status } from '../enums/status.enum';
 
 export const featureFlags = pgTable('feature_flags', {
   flagId: uuid('flag_id')
@@ -21,6 +22,7 @@ export const featureFlags = pgTable('feature_flags', {
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   enabled: boolean('enabled').default(false).notNull(),
+  status: status('status').notNull().default('active'),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
