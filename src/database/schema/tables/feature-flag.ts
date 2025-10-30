@@ -20,6 +20,7 @@ export const featureFlags = pgTable('feature_flags', {
     .notNull()
     .references(() => applications.appId, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
+  key: varchar('key', { length: 255 }).notNull(),
   description: text('description'),
   enabled: boolean('enabled').default(false).notNull(),
   status: status('status').notNull().default('active'),

@@ -2,9 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ProjectRepository } from '../repository/project.repository';
 import { NewProject, Status } from 'src/database/schema';
 import { ProjectResponse } from '../models/project/response';
-import { ResponseBuilder } from 'src/common/utils/response.builder';
+import { ResponseBuilder, ResponseDto } from 'src/common';
 import { ProjectDto } from '../models/project/dto';
-import { ResponseDto } from 'src/common/dto/response.dto';
 import { CreateProjectRequest } from '../models/project/request';
 
 @Injectable()

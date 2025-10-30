@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ApplicationRepository } from '../repository/application.repository';
-import { ResponseDto } from 'src/common/dto/response.dto';
-import { ApplicationResponse } from '../models/application/response';
-import { ApplicationDto } from '../models/application/dto';
-import { ResponseBuilder } from 'src/common/utils/response.builder';
-import { NewApplication, Status } from 'src/database/schema';
-import { CreateApplicationRequest } from '../models/application/request';
-import { UpdateApplication } from 'src/database/schema/types';
+import { ApplicationRepository } from '../repository';
+import { ResponseDto, ResponseBuilder } from 'src/common';
+import {
+    ApplicationDto,
+    CreateApplicationRequest,
+    ApplicationResponse,
+} from '../models/application';
+import { NewApplication, Status, UpdateApplication } from 'src/database/schema';
 
 @Injectable()
 export class ApplicationService {
@@ -35,15 +35,19 @@ export class ApplicationService {
         }
     }
 
-    async createApplication(projectId: string, requestBody: CreateApplicationRequest): Promise<ResponseDto<ApplicationResponse> | ResponseDto<null>> {
-       try {
+    async createApplication(
+        projectId: string,
+        requestBody: CreateApplicationRequest,
+    ): Promise<ResponseDto<ApplicationResponse> | ResponseDto<null>> {
+        try {
             const payload: NewApplication = {
                 name: requestBody.name,
                 description: requestBody.description,
                 projectId: projectId,
                 status: Status.Active,
             };
-            const newApplication = await this.applicationRepository.createApplication(payload);
+            const newApplication =
+                await this.applicationRepository.createApplication(payload);
             const applicationDto = new ApplicationDto();
             applicationDto.dataFromEntity = newApplication;
             const applicationResponse = new ApplicationResponse();
@@ -52,19 +56,26 @@ export class ApplicationService {
                 applicationResponse,
                 'Application created successfully',
             );
-       } catch (error) {
-            return ResponseBuilder.error('Failed to create application');   
-       }
+        } catch (error) {
+            return ResponseBuilder.error('Failed to create application');
+        }
     }
 
-    async updateApplication(applicationId: string, requestBody: CreateApplicationRequest): Promise<ResponseDto<ApplicationResponse> | ResponseDto<null>> {
+    async updateApplication(
+        applicationId: string,
+        requestBody: CreateApplicationRequest,
+    ): Promise<ResponseDto<ApplicationResponse> | ResponseDto<null>> {
         try {
             const payload: UpdateApplication = {
                 name: requestBody.name,
                 description: requestBody.description,
                 status: Status.Active,
             };
-            const updatedApplication = await this.applicationRepository.updateApplicationStatus(applicationId, payload);
+            const updatedApplication =
+                await this.applicationRepository.updateApplicationStatus(
+                    applicationId,
+                    payload,
+                );
             const applicationDto = new ApplicationDto();
             applicationDto.dataFromEntity = updatedApplication;
             const applicationResponse = new ApplicationResponse();
@@ -73,19 +84,21 @@ export class ApplicationService {
                 applicationResponse,
                 'Application updated successfully',
             );
-        } catch( error) {
+        } catch (error) {
             return ResponseBuilder.error('Failed to update application');
         }
     }
 
     async deleteApplication(applicationId: string): Promise<ResponseDto<null>> {
         try {
-            await this.applicationRepository.deleteApplicationById(applicationId);
+            await this.applicationRepository.deleteApplicationById(
+                applicationId,
+            );
             return ResponseBuilder.updated<null>(
                 null,
                 'Application deleted successfully',
             );
-        } catch( error) {
+        } catch (error) {
             return ResponseBuilder.error('Failed to delete application');
         }
     }

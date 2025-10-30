@@ -37,6 +37,7 @@ export type {
     
     Application,
     NewApplication,
+    UpdateApplication,
 
     FeatureFlag,
     NewFeatureFlag,

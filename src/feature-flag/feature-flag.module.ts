@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/database/database.module';
-import { ProjectRepository } from './repository/project.repository';
-import { FeatureFlagService } from './services/feature-flag.service';
-import { FeatureFlagController } from './controllers/feature-flag.controller';
-import { ProjectService } from './services/ project.service';
-import { ProjectController } from './controllers/project.controller';
-import { ApplicationService } from './services/application.service';
-import { ApplicationRepository } from './repository/application.repository';
-import { ApplicationController } from './controllers/application.controller';
+import { ProjectRepository, FeatureFlagRepository, ApplicationRepository } from './repository';
+import { ProjectService, ApplicationService, FeatureFlagService } from './services';
+import { FeatureFlagController, ProjectController, ApplicationController } from './controllers';
+import { FeatureFlagAdapter } from './adapters/feature-flag.adapter';
+import { AdapterConstant } from 'src/common';
+
 
 @Module({
     imports: [
@@ -20,12 +18,19 @@ import { ApplicationController } from './controllers/application.controller';
         ApplicationRepository,
         ApplicationService,
 
+        FeatureFlagRepository,
         FeatureFlagService,
+
+        {
+        provide: AdapterConstant.FEATURE_FLAG_ADAPTER,
+        useClass: FeatureFlagAdapter,
+        }
     ],
     controllers: [
         ProjectController,
         ApplicationController,
         FeatureFlagController,
-    ]
+    ],
+    exports: [AdapterConstant.FEATURE_FLAG_ADAPTER]
 })
 export class FeatureFlagModule {}
