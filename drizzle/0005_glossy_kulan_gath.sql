@@ -1,0 +1,1 @@
+ALTER TABLE "feature_flags" ADD COLUMN "key" varchar(255) NOT NULL;

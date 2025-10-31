@@ -5,7 +5,7 @@ import { FeatureFlagResponse } from "../models/feature-flag/response";
 import { ResponseBuilder } from "src/common/utils/response.builder";
 import { FeatureFlagDto } from "../models/feature-flag/dto";
 import { CreateFeatureFlagRequest } from "../models/feature-flag/request";
-import { NewFeatureFlag } from "src/database/schema";
+import { NewFeatureFlag } from "src/modules/database/schema";
 
 @Injectable()
 export class FeatureFlagService {

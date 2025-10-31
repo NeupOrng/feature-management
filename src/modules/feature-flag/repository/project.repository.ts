@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { NewProject, projects, StatusType } from 'src/database/schema';
+import { AdapterConstant } from 'src/common';
+import { NewProject, projects, StatusType } from 'src/modules/database/schema';
 
 @Injectable()
 export class ProjectRepository {
-    constructor(@Inject('DRIZZLE_ORM') private database: NodePgDatabase) {}
+    constructor(@Inject(AdapterConstant.DRIZZLE_ORM) private database: NodePgDatabase) {}
 
     async findProjectById(id: string) {
         const [project] = await this.database

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Project } from 'src/database/schema';
+import { Project } from 'src/modules/database/schema';
 
 export class ProjectDto {
     @ApiProperty({ description: 'Unique identifier for the project', example: '550e8400-e29b-41d4-a716-446655440000' })

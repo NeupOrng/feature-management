@@ -36,6 +36,13 @@
       "when": 1761557523685,
       "tag": "0004_safe_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1761887942517,
+      "tag": "0005_glossy_kulan_gath",
+      "breakpoints": true
     }
   ]
 }

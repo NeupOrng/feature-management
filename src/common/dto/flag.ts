@@ -12,3 +12,11 @@ export class AppDto {
     description?: string;
     flags: FlagDto[];
 }
+
+
+export class ProjDto {
+    id: string;
+    name: string;
+    description?: string;
+    applications: AppDto[];
+}

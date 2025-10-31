@@ -6,7 +6,7 @@ import {
     CreateApplicationRequest,
     ApplicationResponse,
 } from '../models/application';
-import { NewApplication, Status, UpdateApplication } from 'src/database/schema';
+import { NewApplication, Status, UpdateApplication } from 'src/modules/database/schema';
 
 @Injectable()
 export class ApplicationService {

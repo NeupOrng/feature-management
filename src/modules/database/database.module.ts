@@ -3,12 +3,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import * as schema from './schema';
+import { AdapterConstant } from 'src/common';
 
 @Module({
     imports: [ConfigModule],
     providers: [
         {
-            provide: 'DRIZZLE_ORM',
+            provide: AdapterConstant.DRIZZLE_ORM,
             inject: [ConfigService],
             useFactory: async (ConfigService: ConfigService) => {
                 const connectionString = ConfigService.get<string>('DATABASE_URL');
@@ -24,6 +25,6 @@ import * as schema from './schema';
             }
         }
     ],
-    exports: ['DRIZZLE_ORM']
+    exports: [AdapterConstant.DRIZZLE_ORM]
 })
 export class DatabaseModule {}

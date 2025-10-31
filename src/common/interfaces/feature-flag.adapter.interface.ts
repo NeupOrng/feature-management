@@ -1,5 +1,5 @@
-import { AppDto } from "../dto/flag";
+import { ProjDto } from "../dto/flag";
 
 export interface IFeatureFlagAdapter {
-    listAppFlag(): Promise<AppDto[]>;
+    listAppFlag(): Promise<ProjDto[]>;
 }

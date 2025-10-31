@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Application } from 'src/database/schema';
+import { Application } from 'src/modules/database/schema';
 
 export class ApplicationDto {
     @ApiProperty({ description: 'Unique identifier for the application', example: '660e8400-e29b-41d4-a716-446655440000' })

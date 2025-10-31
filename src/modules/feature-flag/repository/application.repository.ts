@@ -1,17 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { AdapterConstant } from 'src/common';
 import {
     Application,
     applications,
     NewApplication,
     Status,
-} from 'src/database/schema';
-import { UpdateApplication } from 'src/database/schema/types';
+} from 'src/modules/database/schema';
+import { UpdateApplication } from 'src/modules/database/schema/types';
 
 @Injectable()
 export class ApplicationRepository {
-    constructor(@Inject('DRIZZLE_ORM') private database: NodePgDatabase) {}
+    constructor(@Inject(AdapterConstant.DRIZZLE_ORM) private database: NodePgDatabase) {}
 
     findByProjectId(projectId: string) {
         return this.database
@@ -49,5 +50,20 @@ export class ApplicationRepository {
         await this.database
             .delete(applications)
             .where(eq(applications.appId, applicationId));
+    }
+
+    async findByProjectIdsAndStatus(
+        projectIds: string[],
+        status: Status,
+    ): Promise<Application[]> {
+        return this.database
+            .select()
+            .from(applications)
+            .where(
+                and(
+                    inArray(applications.projectId, projectIds),
+                    eq(applications.status, status),
+                ),
+            );
     }
 }
