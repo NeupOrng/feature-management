@@ -1,40 +1,66 @@
-import { CacheModule } from '@nestjs/cache-manager';
-import {
-    DynamicModule,
-    Global,
-    Module,
-    OnApplicationShutdown,
-} from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { redisCacheOptions } from './redis.options';
+// src/redis/redis.module.ts
+import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import Redis, { RedisOptions } from 'ioredis';
+import { REDIS_CLIENT } from './redis.constants';
 import { RedisCacheService } from './redis-cache.service';
-import { RedisProviders } from './redis.provider';
+
+export interface RedisModuleOptions {
+    connectionOptions: RedisOptions;
+    onClientReady?: (client: Redis) => void | Promise<void>;
+}
 
 @Global()
 @Module({})
-export class RedisCacheModule implements OnApplicationShutdown {
-    static forRoot(): DynamicModule {
+export class RedisCacheModule {
+    static forRoot(options: RedisModuleOptions): DynamicModule {
+        const provider: Provider = {
+            provide: REDIS_CLIENT,
+            useFactory: async () => {
+                const client = new Redis(options.connectionOptions);
+                await options.onClientReady?.(client);
+                return client;
+            },
+        };
+
         return {
             module: RedisCacheModule,
-            imports: [
-                ConfigModule,
-                CacheModule.registerAsync({
-                    isGlobal: true,
-                    imports: [ConfigModule],
-                    useFactory: redisCacheOptions,
-                    inject: [ConfigService],
-                }),
-            ],
-            providers: [RedisCacheService, ...RedisProviders],
-            exports: [RedisCacheService, CacheModule],
+            providers: [provider, RedisCacheService],
+            exports: [REDIS_CLIENT, RedisCacheService],
         };
     }
 
-    async onApplicationShutdown() {
-        const cacheManager = (global as any).cacheManager;
-        if (cacheManager?.store?.getClient) {
-            const client = cacheManager.store.getClient();
-            if (client?.quit) await client.quit();
-        }
+    static forRootAsync({
+        imports = [],
+        useFactory,
+        inject = [],
+    }: {
+        imports?: any[];
+        useFactory: (
+            ...args: any[]
+        ) => RedisModuleOptions | Promise<RedisModuleOptions>;
+        inject?: any[];
+    }): DynamicModule {
+        const optionsProvider = {
+            provide: 'REDIS_MODULE_OPTIONS',
+            useFactory,
+            inject,
+        };
+
+        const clientProvider: Provider = {
+            provide: REDIS_CLIENT,
+            useFactory: async (opts: RedisModuleOptions) => {
+                const client = new Redis(opts.connectionOptions);
+                await opts.onClientReady?.(client);
+                return client;
+            },
+            inject: ['REDIS_MODULE_OPTIONS'],
+        };
+
+        return {
+            module: RedisCacheModule,
+            imports,
+            providers: [optionsProvider, clientProvider, RedisCacheService],
+            exports: [REDIS_CLIENT, RedisCacheService],
+        };
     }
 }

@@ -8,7 +8,8 @@ export const enablePgcrypto = sql`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`;
 
 export { projects } from './tables/project';
 export { applications } from './tables/application';
-export { featureFlags } from './tables/feature-flag'
+export { featureFlags } from './tables/feature-flag';
+export { applicationSecretKeyMapping } from './tables/application-secret-key-mapping';
 
 
 // --------------------------
@@ -41,6 +42,9 @@ export type {
 
     FeatureFlag,
     NewFeatureFlag,
+
+    ApplicationSecretKeyMapping,
+    NewApplicationSecretKeyMapping,
 } from './types'
 
 

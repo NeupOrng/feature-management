@@ -4,6 +4,7 @@ import {
     ProjectRepository,
     FeatureFlagRepository,
     ApplicationRepository,
+    ApplicationSecretKeyMappingRepository,
 } from './repository';
 import {
     ProjectService,
@@ -29,6 +30,8 @@ import { AdapterConstant } from 'src/common';
 
         FeatureFlagRepository,
         FeatureFlagService,
+
+        ApplicationSecretKeyMappingRepository,
 
         {
             provide: AdapterConstant.FEATURE_FLAG_ADAPTER,

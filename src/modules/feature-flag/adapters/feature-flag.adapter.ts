@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AppDto, IFeatureFalgAdapter as IFeatureFlagAdapter } from 'src/common';
 import {
     ApplicationRepository,
+    ApplicationSecretKeyMappingRepository,
     FeatureFlagRepository,
     ProjectRepository,
 } from '../repository';
@@ -14,6 +15,7 @@ export class FeatureFlagAdapter implements IFeatureFlagAdapter {
         private readonly projectRepository: ProjectRepository,
         private readonly applicationRepository: ApplicationRepository,
         private readonly featureFlagRepository: FeatureFlagRepository,
+        private readonly applicationSecretKeyMappingRepository: ApplicationSecretKeyMappingRepository,
     ) {}
     async listAppFlag(): Promise<ProjDto[]> {
         const projects = await this.projectRepository.findProjectByStatus(
@@ -56,5 +58,21 @@ export class FeatureFlagAdapter implements IFeatureFlagAdapter {
             return projDto;
         });
 
+    }
+
+    async findAppBySecretKey(secretKey: string): Promise<AppDto | null> {
+        const keyMapping = await this.applicationSecretKeyMappingRepository.findBySecretKey(secretKey);
+        if(keyMapping.length === 0) {
+            return null;
+        }
+        const app = await this.applicationRepository.findByApplicationIdAndProjectId(keyMapping[0].appId, keyMapping[0].projectId);
+        if (app.length === 0) {
+            return null;
+        }
+        const appDto: AppDto = new AppDto();
+        appDto.id = app[0].appId;
+        appDto.name = app[0].name;
+        appDto.description = app[0].description ?? '';
+        return appDto;
     }
 }

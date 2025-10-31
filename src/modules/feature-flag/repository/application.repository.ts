@@ -26,6 +26,18 @@ export class ApplicationRepository {
             );
     }
 
+    findByApplicationIdAndProjectId(applicationId: string, projectId: string) {
+        return this.database
+            .select()
+            .from(applications)
+            .where(
+                and(
+                    eq(applications.appId, applicationId),
+                    eq(applications.projectId, projectId),
+                ),
+            );
+    }
+
     async createApplication(payload: NewApplication) {
         const [newApplication] = await this.database
             .insert(applications)
