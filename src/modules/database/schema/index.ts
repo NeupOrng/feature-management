@@ -45,6 +45,9 @@ export type {
 
     ApplicationSecretKeyMapping,
     NewApplicationSecretKeyMapping,
+
+    Entity,
+    NewEntity,
 } from './types'
 
 

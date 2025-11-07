@@ -1,0 +1,1 @@
+ALTER TABLE "applications" ADD COLUMN "context" jsonb DEFAULT '{"idendifierId":{"type":"string","required":true},"role":{"type":"string","required":true},"version":{"type":"version","required":true}}'::jsonb NOT NULL;

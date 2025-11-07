@@ -1,11 +1,20 @@
 import { sql } from 'drizzle-orm';
-import { pgTable, varchar, uuid, json } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, uuid, json, timestamp } from 'drizzle-orm/pg-core';
 
-export const Entities = pgTable('entities', {
+export const entities = pgTable('entities', {
     id: uuid('id')
         .default(sql`gen_random_uuid()`)
         .primaryKey(),
-    idendifierId: varchar('name', { length: 255 }),
-    role: varchar('role', { length: 255 }),
-    customContext: json('custom_context').notNull().default('{}'),
+    applicationId: uuid('application_id').notNull(),
+    idendifierId: varchar('name', { length: 255 }).notNull(),
+    role: varchar('role', { length: 255 }).notNull(),
+    version: varchar('version', { length: 255 }).notNull().default('1.0.0'),
+    customContext: json('custom_context').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+        .defaultNow()
+        .notNull()
+        .$onUpdate(() => new Date()),
 });
