@@ -1,0 +1,1 @@
+ALTER TABLE "application-secret-key-mapping" ALTER COLUMN "secret_key_id" SET DEFAULT gen_random_uuid();

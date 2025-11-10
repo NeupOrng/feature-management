@@ -7,7 +7,7 @@ import {
     ProjectRepository,
 } from '../repository';
 import { Status } from 'src/modules/database/schema';
-import { ProjDto } from 'src/common/dto/flag';
+import { FlagDto, ProjDto } from 'src/common/dto/flag';
 
 @Injectable()
 export class FeatureFlagAdapter implements IFeatureFlagAdapter {
@@ -46,33 +46,51 @@ export class FeatureFlagAdapter implements IFeatureFlagAdapter {
                 appDto.description = app.description ?? '';
                 appDto.flags = flags
                     .filter((flag) => flag.appId === app.appId)
-                    .map((flag) => ({
-                        id: flag.flagId,
-                        name: flag.name,
-                        description: flag.description ?? '',
-                        isEnabled: flag.enabled,
-                        key: flag.key,
-                    }));
+                    .map((flag) => {
+                        const flagDto = new FlagDto();
+                        flagDto.setValueFromFeatureFlag(flag);
+                        return flagDto;
+                    });
                 return appDto;
             });
             return projDto;
         });
-
     }
 
     async findAppBySecretKey(secretKey: string): Promise<AppDto | null> {
-        const keyMapping = await this.applicationSecretKeyMappingRepository.findBySecretKey(secretKey);
-        if(keyMapping.length === 0) {
+        const keyMapping =
+            await this.applicationSecretKeyMappingRepository.findBySecretKey(
+                secretKey,
+            );
+        if (keyMapping.length === 0) {
             return null;
         }
-        const app = await this.applicationRepository.findByApplicationIdAndProjectId(keyMapping[0].appId, keyMapping[0].projectId);
+        const app =
+            await this.applicationRepository.findByApplicationIdAndProjectId(
+                keyMapping[0].appId,
+                keyMapping[0].projectId,
+            );
+
         if (app.length === 0) {
             return null;
         }
+
         const appDto: AppDto = new AppDto();
         appDto.id = app[0].appId;
         appDto.name = app[0].name;
         appDto.description = app[0].description ?? '';
+        const flagConfigs =
+            await this.featureFlagRepository.findFeatureFlagsByApplicationIdsAndStatus(
+                [appDto.id],
+                Status.Active,
+            );
+        const flagDtos = flagConfigs.map((config): FlagDto => {
+            const flagDto = new FlagDto();
+            flagDto.setValueFromFeatureFlag(config);
+            return flagDto;
+        });
+
+        appDto.flags = flagDtos;
         return appDto;
     }
 }

@@ -1,8 +1,9 @@
-import { Inject, Injectable, Logger, LoggerService, OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, Logger, OnModuleInit, UnauthorizedException } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { AdapterConstant } from "src/common";
+import { AdapterConstant, AppDto } from "src/common";
 import { IFeatureFalgAdapter } from "src/common";
-import { RedisCacheService } from "src/modules/redis-cache";
+import { RedisCacheService, CustomCache } from "src/modules/redis-cache";
+import { GetFlagConfigRequest } from "../models/flag-confg/request";
 
 @Injectable()
 export class EngineService implements OnModuleInit {
@@ -11,7 +12,7 @@ export class EngineService implements OnModuleInit {
     constructor(
         @Inject(AdapterConstant.FEATURE_FLAG_ADAPTER)
         private readonly featureFlagAdapter: IFeatureFalgAdapter,
-        private readonly redisCacheService: RedisCacheService
+        public readonly redisCacheService: RedisCacheService
     ) {}
 
     async onModuleInit() {
@@ -41,5 +42,19 @@ export class EngineService implements OnModuleInit {
                 }
            }
         }
+    }
+
+    async getFlagConfig(secretKey: string, payload: GetFlagConfigRequest) {
+        const application = await this.findAppBySecretKey(secretKey);
+        if(!application) {
+            throw new UnauthorizedException('Application Not Found');
+        }
+        return application;
+    }
+
+    @CustomCache((secretKey: string) => `application_mapping:${secretKey}`, 120)
+    async findAppBySecretKey(secretKey: string): Promise<AppDto | null> {
+        this.logger.log('retriving data: ', secretKey)
+        return this.featureFlagAdapter.findAppBySecretKey(secretKey);
     }
 }

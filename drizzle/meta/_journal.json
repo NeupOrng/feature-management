@@ -57,6 +57,13 @@
       "when": 1762491146438,
       "tag": "0007_blue_talkback",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1762744427805,
+      "tag": "0008_daily_xorn",
+      "breakpoints": true
     }
   ]
 }

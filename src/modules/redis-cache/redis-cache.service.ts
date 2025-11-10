@@ -26,6 +26,7 @@ export class RedisCacheService implements OnModuleDestroy, OnModuleInit {
     }
 
     async get<T>(key: string): Promise<T | null> {
+        this.logger.log('getting cache: ', key)
         const raw = await this.redis.get(key);
         return raw ? JSON.parse(raw) : null;
     }

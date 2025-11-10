@@ -3,6 +3,7 @@ import { RedisCacheModule } from '../redis-cache/redis-cache.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EngineService } from './services/engine.service';
 import { FeatureFlagModule } from '../feature-flag/feature-flag.module';
+import { FlagEngineController } from './controllers/flag-engine.controller';
 
 @Module({
     imports: [
@@ -13,7 +14,9 @@ import { FeatureFlagModule } from '../feature-flag/feature-flag.module';
     providers: [
         EngineService
     ],
-    controllers: [],
+    controllers: [
+        FlagEngineController,
+    ],
     exports: [
     ]
 })

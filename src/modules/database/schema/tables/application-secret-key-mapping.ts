@@ -1,4 +1,4 @@
-import { is } from 'drizzle-orm';
+import { is, sql } from 'drizzle-orm';
 import {
     pgTable,
     uuid,
@@ -13,7 +13,7 @@ import {
 export const applicationSecretKeyMapping = pgTable(
     'application-secret-key-mapping',
     {
-        secretKeyId: uuid('secret_key_id').notNull().primaryKey(),
+        secretKeyId: uuid('secret_key_id').default(sql`gen_random_uuid()`).primaryKey(),
         appId: uuid('app_id').notNull(),
         projectId: uuid('project_id').notNull(),
         createdAt: timestamp('created_at', { withTimezone: true })
