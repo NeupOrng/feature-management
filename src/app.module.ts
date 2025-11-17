@@ -15,21 +15,7 @@ import { FeatureFlagEngineModule } from './modules/flag-engine/flag-engine.modul
     }),
     DatabaseModule,
     FeatureFlagModule,
-    RedisCacheModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        connectionOptions: {
-          host: config.get('REDIS_HOST', 'localhost'),
-          port: config.get('REDIS_PORT', 6379),
-          password: config.get('REDIS_PASSWORD'),
-          db: config.get('REDIS_DB', 0),
-        },
-        onClientReady: (client) => {
-          client.on('error', (err) => console.error('Redis error:', err));
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    RedisCacheModule,
     ScheduleModule.forRoot(),
     FeatureFlagEngineModule,
   ],

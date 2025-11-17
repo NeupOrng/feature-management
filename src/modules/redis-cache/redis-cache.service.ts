@@ -6,46 +6,30 @@ import {
     Logger,
     OnModuleInit,
 } from '@nestjs/common';
-import { Redis } from 'ioredis';
-import { REDIS_CLIENT } from './redis.constants';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 @Injectable()
-export class RedisCacheService implements OnModuleDestroy, OnModuleInit {
+export class RedisCacheService {
     private readonly logger = new Logger(RedisCacheService.name);
 
-    constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+    constructor(private readonly redisService: RedisService) {}
 
-    async set<T>(key: string, value: T, ttlSeconds?: number): Promise<void> {
-        const serialized = JSON.stringify(value);
-        if (ttlSeconds !== undefined) {
-            await this.redis.set(key, serialized, 'EX', ttlSeconds);
+    async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
+        const client = this.redisService.getOrThrow(); // Gets the ioredis instance
+        if (ttlSeconds) {
+          await client.set(key, value, 'EX', ttlSeconds);
         } else {
-            await this.redis.set(key, serialized);
+          await client.set(key, value);
         }
-        this.logger.verbose(`SET ${key}`);
-    }
-
-    async get<T>(key: string): Promise<T | null> {
-        this.logger.log('getting cache: ', key)
-        const raw = await this.redis.get(key);
-        return raw ? JSON.parse(raw) : null;
-    }
-
-    get client(): Redis {
-        return this.redis;
-    }
-
-    onModuleInit() {
-        this.client
-            .ping()
-            .then(() => {
-                this.logger.log('Redis client connected');
-            })
-            .catch((err) => this.logger.error('Redis error:', err));
-    }
-
-    onModuleDestroy() {
-        this.logger.log('Disconnecting Redis...');
-        this.redis.disconnect();
-    }
+      }
+    
+      async get(key: string): Promise<string | null> {
+        const client = this.redisService.getOrThrow();
+        return client.get(key);
+      }
+    
+      async del(key: string): Promise<number> {
+        const client = this.redisService.getOrThrow();
+        return client.del(key);
+      }
 }

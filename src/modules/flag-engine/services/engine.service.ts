@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, Logger, OnModuleInit, Unauthor
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { AdapterConstant, AppDto } from "src/common";
 import { IFeatureFalgAdapter } from "src/common";
-import { RedisCacheService, CustomCache } from "src/modules/redis-cache";
+import { RedisCacheService } from "src/modules/redis-cache";
 import { GetFlagConfigRequest } from "../models/flag-confg/request";
 import { NewEntity } from "src/modules/database/schema";
 
@@ -23,23 +23,21 @@ export class EngineService implements OnModuleInit {
     @Cron(CronExpression.EVERY_5_MINUTES)
     async cachingFlags(): Promise<void> {
         this.logger.log("Running cron job to save feature flags...");
-        const pong = await this.redisCacheService.client.ping();
-        if(pong !== 'PONG') {
-            this.logger.error("Redis is not connected properly.");
-            return;
-        }
         await this.saveFeatureFlags();
         this.logger.log("Feature flags saved successfully.");
     }
 
     async saveFeatureFlags(): Promise<void> {
         const projFlags = await this.featureFlagAdapter.listAppFlag();
+        this.logger.log(`total projFlags: ${projFlags}`);
         for(const projFlag of projFlags) {
            for(const appFlag of projFlag.applications) {
                 for(const flag of appFlag.flags) {
                     const cacheKey = `feature_flags:proj_${projFlag.id}:app_${appFlag.id}:flag-key_${flag.key}`;
                     this.logger.log(`Setting cache key: ${cacheKey} with value: ${JSON.stringify(flag)}`);
                     await this.redisCacheService.set(cacheKey, JSON.stringify(flag));
+                    const result = await this.redisCacheService.get(cacheKey);
+                    this.logger.log(`Cache key: ${cacheKey}: ${result} set successfully`);
                 }
            }
         }
@@ -67,7 +65,6 @@ export class EngineService implements OnModuleInit {
         };
     }
 
-    @CustomCache((secretKey: string) => `application_mapping:${secretKey}`, 120)
     async findAppBySecretKey(secretKey: string): Promise<AppDto | null> {
         this.logger.log('retriving data: ', secretKey)
         return this.featureFlagAdapter.findAppBySecretKey(secretKey);
