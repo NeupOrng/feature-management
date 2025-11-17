@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AppDto, IFeatureFalgAdapter as IFeatureFlagAdapter } from 'src/common';
 import {
     ApplicationRepository,
@@ -6,14 +6,19 @@ import {
     FeatureFlagRepository,
     ProjectRepository,
 } from '../repository';
-import { Status } from 'src/modules/database/schema';
+import { Entity, NewEntity, Status } from 'src/modules/database/schema';
 import { FlagDto, ProjDto } from 'src/common/dto/flag';
+import { EntityRepository } from '../repository/entity.repository';
 
 @Injectable()
 export class FeatureFlagAdapter implements IFeatureFlagAdapter {
+
+    private readonly logger = new Logger(FeatureFlagAdapter.name);    
+
     constructor(
         private readonly projectRepository: ProjectRepository,
         private readonly applicationRepository: ApplicationRepository,
+        private readonly entityRepository: EntityRepository,
         private readonly featureFlagRepository: FeatureFlagRepository,
         private readonly applicationSecretKeyMappingRepository: ApplicationSecretKeyMappingRepository,
     ) {}
@@ -91,6 +96,11 @@ export class FeatureFlagAdapter implements IFeatureFlagAdapter {
         });
 
         appDto.flags = flagDtos;
+        this.logger.log("App: ", appDto)
         return appDto;
+    }
+
+    async upsertEntity(entity: NewEntity): Promise<Entity> {
+        return this.entityRepository.upsert(entity);
     }
 }

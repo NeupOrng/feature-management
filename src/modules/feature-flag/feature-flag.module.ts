@@ -18,6 +18,7 @@ import {
 } from './controllers';
 import { FeatureFlagAdapter } from './adapters/feature-flag.adapter';
 import { AdapterConstant } from 'src/common';
+import { EntityRepository } from './repository/entity.repository';
 
 @Module({
     imports: [DatabaseModule],
@@ -30,6 +31,8 @@ import { AdapterConstant } from 'src/common';
 
         FeatureFlagRepository,
         FeatureFlagService,
+
+        EntityRepository,
 
         ApplicationSecretKeyMappingRepository,
 

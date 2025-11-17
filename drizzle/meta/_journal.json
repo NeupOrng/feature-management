@@ -64,6 +64,20 @@
       "when": 1762744427805,
       "tag": "0008_daily_xorn",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1763350486034,
+      "tag": "0009_serious_killraven",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1763350721818,
+      "tag": "0010_wakeful_nomad",
+      "breakpoints": true
     }
   ]
 }

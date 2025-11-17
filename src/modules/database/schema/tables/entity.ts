@@ -10,6 +10,7 @@ export const entities = pgTable('entities', {
     role: varchar('role', { length: 255 }).notNull(),
     version: varchar('version', { length: 255 }).notNull().default('1.0.0'),
     customContext: json('custom_context').notNull().default({}),
+    userFeatureFlag: json('user_feature_flag').notNull().default({}),
     createdAt: timestamp('created_at', { withTimezone: true })
         .defaultNow()
         .notNull(),

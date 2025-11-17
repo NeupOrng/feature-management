@@ -1,9 +1,10 @@
-import { Inject, Injectable, Logger, OnModuleInit, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, Logger, OnModuleInit, UnauthorizedException } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { AdapterConstant, AppDto } from "src/common";
 import { IFeatureFalgAdapter } from "src/common";
 import { RedisCacheService, CustomCache } from "src/modules/redis-cache";
 import { GetFlagConfigRequest } from "../models/flag-confg/request";
+import { NewEntity } from "src/modules/database/schema";
 
 @Injectable()
 export class EngineService implements OnModuleInit {
@@ -49,12 +50,42 @@ export class EngineService implements OnModuleInit {
         if(!application) {
             throw new UnauthorizedException('Application Not Found');
         }
-        return application;
+        const featureFlags = await this.checkKeyConfig(payload, application);
+
+        const newEntity: NewEntity = {
+            applicationId: application.id,
+            idendifierId: payload.idendifierId,
+            role: payload.role,
+            version: payload.version,
+            customContext: payload.customContext,
+            userFeatureFlag: featureFlags,
+        }
+        const entity = await this.featureFlagAdapter.upsertEntity(newEntity);
+        return {
+            featureFlags,
+            entity
+        };
     }
 
     @CustomCache((secretKey: string) => `application_mapping:${secretKey}`, 120)
     async findAppBySecretKey(secretKey: string): Promise<AppDto | null> {
         this.logger.log('retriving data: ', secretKey)
         return this.featureFlagAdapter.findAppBySecretKey(secretKey);
+    }
+
+    private async checkKeyConfig(payload: GetFlagConfigRequest, application: AppDto) {
+        const { idendifierId, role, version, customContext } = payload;
+        if(!idendifierId || !role) {
+            throw new BadRequestException('Identifier ID and Role are required');
+        }
+        const flags = application.flags.map((flag) => ({
+            key: flag.key,
+            isEnabled: flag.isEnabled,
+        }));
+        const result = {};
+        flags.forEach((flags) => {
+            result[flags.key] = flags.isEnabled;
+        });
+        return result;
     }
 }

@@ -10,6 +10,7 @@ export { projects } from './tables/project';
 export { applications } from './tables/application';
 export { featureFlags } from './tables/feature-flag';
 export { applicationSecretKeyMapping } from './tables/application-secret-key-mapping';
+export { entities } from './tables/entity';
 
 
 // --------------------------

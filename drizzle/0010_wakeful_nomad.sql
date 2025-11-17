@@ -1,0 +1,1 @@
+ALTER TABLE "entities" ADD COLUMN "user_feature_flag" json DEFAULT '{}'::json NOT NULL;
