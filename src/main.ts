@@ -12,13 +12,6 @@ async function bootstrap() {
             json: false
         })
     });
-    app.connectMicroservice<MicroserviceOptions>({
-        transport: Transport.REDIS,
-        options: {
-            host: process.env.REDIS_HOST || 'localhost',
-            port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
-        },
-    });
 
     const config = new DocumentBuilder()
         .setTitle('NestJS with Drizzle API')
@@ -29,7 +22,7 @@ async function bootstrap() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('docs', app, document);
+    SwaggerModule.setup('api', app, document);
     await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
